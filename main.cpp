@@ -1,10 +1,24 @@
-// Code for graph cut based determination 
-//#include "ImageGeneral.h" 
+﻿/*Receive image of  a transparent vessel containing some material and the boundary of the vessel in the image and return the boundary of the material in the vessel.
+This code uses the graph-cut min-cut max flow  algorithm  to trace boundary of materials in transparent vessel. Based on the paper: Tracing liquid level and material boundaries in transparent vessels using the graph cut computer vision approach.
+The function Find_Phase_Boundary_By_Graph_Cut in the main.cpp file receives an image of the transparent vessel containing some material and binary edge image that contain the boundary of the transparent vessel in the first image, it returns the image  with the boundary of the material inside the vessel marked red.
+This code uses the implementation of the  Boykov-Kolmogorov algorithm supplied in: http://vision.csd.uwo.ca/code/ And discussed in the paper: Boykov, Yuri, and Vladimir Kolmogorov. "An experimental comparison of min-cut/max-flow algorithms for energy minimization in vision." Pattern Analysis and Machine Intelligence, IEEE Transactions on 26.9 (2004): 1124-1137.‏
+In addition the code demands some version of OPENCV: http://opencv.org/
+The program demands the dirent.h file which can downloaded:
+http://softagalleria.net/dirent.php
+http://users.cis.fiu.edu/~weiss/cop4338_sum09/dirent.h
+Test images are available in the code directory (in github).
+Larger image sets available at:
+https://goo.gl/photos/JzNJHejDJXh4bPub8
+https://goo.gl/photos/V1nMfiox2L5GuJY36
+https://flic.kr/s/aHsktsKrfs
+https://flic.kr/s/aHsksFjwjn
+The method demand  as input image of the vessel as well as the the boundary of the vessel in the image as a binary edge file with the vessel boundaries marked as 1. Source code (Matlab) for automatic tracing the vessel boundary in the image using segmentation from background or template available at: 
+1) www.mathworks.com/matlabcentral/fileexchange/46887-find-boundary-of-symmetricobject-in-image 
+2) www.mathworks.com/matlabcentral/fileexchange/46907-find-object-in-image-usingtemplate--variable-image-to-template-size-ratio-
+
+*/
+
 #include <opencv2\core\core.hpp>
-
-
-
-
 #include <cstdio>
 #include <iostream>
 #include <opencv2\core\core.hpp>
@@ -519,48 +533,15 @@ void main()
 
 
 
-	/*Mat Img=imread("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K02\\DIMG_660d.JPG");
-	Mat Ib=imread("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K02\\DIMG_660d_BORDERS.tif");
-	Mat ImOut;
+	Mat Img=imread("IMAGE.png");// Image of transparent vessel containing material
+	Mat Ib=imread("IMAGE_BORDERS.tif");// Binary edge image with the boundary of the vessel in image (see file in this or: https://www.flickr.com/photos/139790174@N02/sets/72157663410991009 for example set)
+	if (!Ib.data || !Img.data) {cout<<"\ncant find image\n"; exit(0);}
+	Mat ImOut;//Output image, similar to Img only  with the material boundary marked in on the image in red 
 	
-	Find_Phase_Boundary_By_Graph_Cut(Img, Ib,ImOut);
-	imshow("fdfD",ImOut);
-	waitKey();*/
-// GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Liquids\\S10\\",10);
- //GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K02\\",20);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\Images for upload\\SolidsS20",20);
-/* GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Liquids\\S30\\",30);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Liquids\\S40\\",40);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Liquids\\S50\\",50);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Liquids\\S60\\",60);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Liquids\\S70\\",70);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Liquids\\S80\\",80);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Liquids\\S90\\",90);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Liquids\\S100\\",100);*/
+	Find_Phase_Boundary_By_Graph_Cut(Img, Ib,ImOut);//Find the material boundary in the image Img and marked them red in ImOut 
+	imshow("PhaseBoundary",ImOut);//Show the image with the material boundary marked red
+	waitKey();
 
+//  GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\Images for upload\\SolidsS20",20);
 
- /*GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Solids\\S10\\",10);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Solids\\S20\\",20);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Solids\\S30\\",30);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Solids\\S40\\",40);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Solids\\S50\\",50);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Solids\\S60\\",60);
-  GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Solids\\S70\\",70);
-  GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Solids\\S80\\",80);
-  GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Solids\\S90\\",90);
-//GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeight\\Solids\\S100\\",100);*/
-/*
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K00\\",20,0.0);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K02\\",20,0.02);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K04\\",20,0.04);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K07\\",20,0.07);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K10\\",20,0.1);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K15\\",20,0.15);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K20\\",20,0.2);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K30\\",20,0.3);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K40\\",20,0.4);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K60\\",20,0.6);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K100\\",20,1);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K200\\",20,2);
- GraphCutPhaseBoundaryOnDir("C:\\Users\\mithycow\\Documents\\GraphCut\\ExponentWeightBulk\\Solids\\K300\\",20,3);*/
 }
